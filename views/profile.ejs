@@ -58,7 +58,7 @@
 						},
 						body: JSON.stringify({
 							message: newMessage,
-							token: localStorage.getItem('token')
+							token: cookies.token
 						})
 					}).then((res) => res.json());
 					

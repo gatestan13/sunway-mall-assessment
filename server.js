@@ -17,11 +17,12 @@ mongoose.connect('mongodb://localhost:27017/login-app-db', {
 
 const app = express();
 app.set('view engine', 'ejs');
-app.use('/', express.static(path.join(__dirname, 'assessment')));
+app.use('/', express.static(path.join(__dirname, 'main')));
 app.use(cookieParser());
 app.use(express.json());
 
 app.get('/user/profile.html', async (req, res) => {
+	//Using cookies to verify logged in user
 	const token = req.cookies.token;
 	try {
 		const user = jwt.verify(token, JWT_SECRET);
@@ -33,6 +34,7 @@ app.get('/user/profile.html', async (req, res) => {
 			userName: userName.username
 		});
 	} catch(error) {
+		//Redirects user to homepage if token cannot be authenticated
 		res.redirect('/');
 	}
 })
@@ -48,33 +50,10 @@ app.post('/api/profile', async (req, res) => {
 		})
 		res.json({ status: 'ok' });
 	} catch(error) {
-		res.json({ status: 'error', error: error});
+		//Redirects user to homepage if token cannot be authenticated
+		res.redirect('/');
 	}
 })
-
-// app.post('/api/change-password', async (req, res) => {
-// 	const { token, newpassword: plainTextPassword} = req.body;
-
-// 	if(!plainTextPassword || typeof plainTextPassword !== 'string') {
-// 		return res.json({ status: 'error', error: 'Invalid password' });
-// 	}
-
-// 	if(plainTextPassword.length < 8){
-// 		return res.json({ status: 'error', error: 'Password needs to be 8 characters minimum' });
-// 	}
-
-// 	try {
-// 		const user = jwt.verify(token, JWT_SECRET);
-// 		const _id = user.id;
-// 		const password = await bcrypt.hash(plainTextPassword, 10);
-// 		await User.updateOne({ _id }, {
-// 			$set: { password }
-// 		})
-// 		res.json({ status: 'ok' });
-// 	} catch(error) {
-// 		res.json({ status: 'error', error: error });
-// 	}
-// })
 
 app.post('/api/login', async (req, res) => {
 	const { username, password } = req.body;
@@ -88,8 +67,9 @@ app.post('/api/login', async (req, res) => {
 			id: user._id, 
 			username: user.username
 		}, JWT_SECRET);
+		//Storing JWT token in a cookie for later verification
 		res.cookie('token', token);
-		return res.json({ status: 'ok', data: token});
+		return res.json({ status: 'ok'});
 	}
 	res.json({ status: 'error' , error: 'Invalid username/password' });
 })
@@ -105,10 +85,12 @@ app.post('/api/register', async (req, res) => {
 		return res.json({ status: 'error', error: 'Invalid password' });
 	}
 
+	//Checks if password is at least 8 characters long
 	if(plainTextPassword.length < 8){
 		return res.json({ status: 'error', error: 'Password needs to be 8 characters minimum' });
 	}
 
+	//Hashes the password before storing it into mongoDB
 	const password = await bcrypt.hash(plainTextPassword, 10);
 
 	try {
