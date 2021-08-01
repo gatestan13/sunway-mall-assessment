@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Message</title>
+		<title>User Profile</title>
 		<style>
 		.message {
 			width: 300px;
@@ -36,10 +36,10 @@
 	</head>
 	<body>
 		<div class="message">
-			<h1>Message</h1>
-			<h2><%= userMessage %></h2>
+			<h1>Logged in as: "<%= userName %>"</h1>
+			<h5>Your current message is: "<%= userMessage %>"</h5>
 			<form id="message">
-				<input type="newMessage" id="newMessage" placeholder="Type your message here" required>
+				<input type="newMessage" id="newMessage" placeholder="Type here to change your message" required>
 				<input type="submit" value="Submit">
 			</form>
 
@@ -67,18 +67,6 @@
 					} else {
 						alert(result.error);
 					}
-				}
-
-				async function userMessage() {
-					const result = await fetch('/profile.html', {
-						method: 'GET',
-						headers: {
-							'Authorization': localStorage.getItem('token')
-						}
-						// body: JSON.stringify({
-						// 	token: localStorage.getItem('token')
-						// })
-					}).then((res) => res.json());
 				}
 			</script>
 		</div>
