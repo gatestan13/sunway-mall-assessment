@@ -15,8 +15,8 @@
 			font-size: 24px;
 			padding: 20px 0 20px 0;
 		}
-		.login-form input[type="password"],
-		.login-form input[type="text"] {
+		.login-form input[type="text"],
+		.login-form input[type="password"] {
 			width: 100%;
 			padding: 15px;
 			border: 1px solid #dddddd;
@@ -32,6 +32,12 @@
 			cursor: pointer;
 			font-weight: bold;
 			color: #ffffff;
+		}
+		.login-form input[type="submit"]:active {
+			-webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+     		-moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+          	box-shadow: inset 0px 0px 5px #c1c1c1;
+   			outline: none;
 		}
 		</style>
 	</head>
@@ -67,6 +73,7 @@
 					if(result.status === 'ok') {
 						console.log('Got the token', result.data);
 						localStorage.setItem('token', result.data);
+						location.href = '/profile.html';
 					} else {
 						alert(result.error);
 					}

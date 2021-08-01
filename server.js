@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const User = require('./model/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const ejs = require('ejs');
+const cookieParser = require('cookie-parser');
 
 const JWT_SECRET = '42KLrandomstring';
 
@@ -14,8 +16,56 @@ mongoose.connect('mongodb://localhost:27017/login-app-db', {
 })
 
 const app = express();
+app.set('view engine', 'ejs');
 app.use('/', express.static(path.join(__dirname, 'assessment')));
+app.use(cookieParser());
 app.use(express.json());
+
+app.get('/profile.html', async (req, res) => {
+	const token = req.cookies.token;
+	try {
+		const user = jwt.verify(token, JWT_SECRET);
+		const _id = user.id;
+		const userMessage = await User.findOne({ _id }, 'message');
+		console.log(userMessage.message);
+		res.render('profile', {
+			userMessage: userMessage.message
+		});
+	} catch(error) {
+		res.redirect('/');
+	}
+	// console.log(req.cookies);
+	// res.render('profile', {
+	// 	userMessage: 'testing'
+	// });
+	// try {
+	// 	const user = jwt.verify(token, JWT_SECRET);
+	// 	const _id = user.id;
+	// 	User.find({}, function(err, userMessage) {
+	// 		res.render('profile', {
+	// 			userMessage: userMessage
+	// 		});
+	// 	})
+	// 	res.json({ status: 'ok' });
+	// } catch(error) {
+	// 	res.json({ status: 'error', error: error});
+	// }
+})
+
+app.post('/api/profile', async (req, res) => {
+	const { token, message } = req.body;
+
+	try {
+		const user = jwt.verify(token, JWT_SECRET);
+		const _id = user.id;
+		await User.updateOne({ _id }, {
+			$set: { message }
+		})
+		res.json({ status: 'ok' });
+	} catch(error) {
+		res.json({ status: 'error', error: error});
+	}
+})
 
 app.post('/api/change-password', async (req, res) => {
 	const { token, newpassword: plainTextPassword} = req.body;
@@ -37,7 +87,7 @@ app.post('/api/change-password', async (req, res) => {
 		})
 		res.json({ status: 'ok' });
 	} catch(error) {
-		res.json({ status: 'error', error: 'Hehe' });
+		res.json({ status: 'error', error: error });
 	}
 })
 
@@ -53,6 +103,7 @@ app.post('/api/login', async (req, res) => {
 			id: user._id, 
 			username: user.username
 		}, JWT_SECRET);
+		res.cookie('token', token);
 		return res.json({ status: 'ok', data: token});
 	}
 	res.json({ status: 'error' , error: 'Invalid username/password' });
