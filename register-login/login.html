@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Login Form</title>
+		<style>
+		.login-form {
+			width: 300px;
+			margin: 0 auto;
+			font-family: Tahoma, Geneva, sans-serif;
+		}
+		.login-form h1 {
+			text-align: center;
+			color: #4d4d4d;
+			font-size: 24px;
+			padding: 20px 0 20px 0;
+		}
+		.login-form input[type="password"],
+		.login-form input[type="text"] {
+			width: 100%;
+			padding: 15px;
+			border: 1px solid #dddddd;
+			margin-bottom: 15px;
+			box-sizing:border-box;
+		}
+		.login-form input[type="submit"] {
+			width: 100%;
+			padding: 15px;
+			background-color: #535b63;
+			border: 0;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-weight: bold;
+			color: #ffffff;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="login-form">
+			<h1>Login Form</h1>
+			<form id="login-form">
+				<input type="text" id="username" placeholder="Username" required>
+				<input type="password" id="password" placeholder="Password" required>
+				<input type="submit" value="Submit Form">
+			</form>
+
+			<script>
+				const form = document.getElementById('login-form');
+				form.addEventListener('submit', login);
+
+				async function login(event) {
+					event.preventDefault();
+					const username = document.getElementById('username').value;
+					const password = document.getElementById('password').value;
+
+					const result = await fetch('/api/login', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							username, 
+							password
+						})
+					}).then((res) => res.json());
+					
+					if(result.status === 'ok') {
+						console.log('Got the token', result.data);
+						localStorage.setItem('token', result.data);
+					} else {
+						alert(result.error);
+					}
+				}
+			</script>
+		</div>
+	</body>
+</html>

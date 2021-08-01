@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Register Form</title>
+		<style>
+		.register-form {
+			width: 300px;
+			margin: 0 auto;
+			font-family: Tahoma, Geneva, sans-serif;
+		}
+		.register-form h1 {
+			text-align: center;
+			color: #4d4d4d;
+			font-size: 24px;
+			padding: 20px 0 20px 0;
+		}
+		.register-form input[type="password"],
+		.register-form input[type="text"] {
+			width: 100%;
+			padding: 15px;
+			border: 1px solid #dddddd;
+			margin-bottom: 15px;
+			box-sizing:border-box;
+		}
+		.register-form input[type="submit"] {
+			width: 100%;
+			padding: 15px;
+			background-color: #535b63;
+			border: 0;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-weight: bold;
+			color: #ffffff;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="register-form">
+			<h1>Register Form</h1>
+			<form id="register-form">
+				<input type="text" id="username" placeholder="Username" required>
+				<input type="password" id="password" placeholder="Password" required>
+				<input type="submit" value="Submit Form">
+			</form>
+
+			<script>
+				const form = document.getElementById('register-form');
+				form.addEventListener('submit', registerUser);
+
+				async function registerUser(event) {
+					event.preventDefault();
+					const username = document.getElementById('username').value;
+					const password = document.getElementById('password').value;
+
+					const result = await fetch('/api/register', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							username, 
+							password
+						})
+					}).then((res) => res.json());
+					
+					if(result.status === 'ok') {
+
+					} else {
+						alert(result.error);
+					}
+				}
+			</script>
+		</div>
+	</body>
+</html>
