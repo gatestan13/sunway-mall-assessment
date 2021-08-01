@@ -14,7 +14,7 @@ mongoose.connect('mongodb://localhost:27017/login-app-db', {
 })
 
 const app = express();
-app.use('/', express.static(path.join(__dirname, 'register-login')));
+app.use('/', express.static(path.join(__dirname, 'assessment')));
 app.use(express.json());
 
 app.post('/api/change-password', async (req, res) => {
@@ -59,7 +59,7 @@ app.post('/api/login', async (req, res) => {
 })
 
 app.post('/api/register', async (req, res) => {
-	const { username, password: plainTextPassword } = req.body;
+	const { firstName, lastName, email, username, password: plainTextPassword } = req.body;
 
 	//Checks if username/password was entered and is of type string
 	if(!username || typeof username !== 'string') {
@@ -77,6 +77,9 @@ app.post('/api/register', async (req, res) => {
 
 	try {
 		const response = await User.create({
+			firstName,
+			lastName,
+			email,
 			username,
 			password
 		});

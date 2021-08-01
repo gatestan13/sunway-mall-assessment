@@ -15,8 +15,8 @@
 			font-size: 24px;
 			padding: 20px 0 20px 0;
 		}
-		.register-form input[type="password"],
-		.register-form input[type="text"] {
+		.register-form input[type="text"],
+		.register-form input[type="password"] {
 			width: 100%;
 			padding: 15px;
 			border: 1px solid #dddddd;
@@ -39,6 +39,9 @@
 		<div class="register-form">
 			<h1>Register Form</h1>
 			<form id="register-form">
+				<input type="text" id="firstName" placeholder="First Name" required>
+				<input type="text" id="lastName" placeholder="Last Name" required>
+				<input type="text" id="email" placeholder="Email Address" required>
 				<input type="text" id="username" placeholder="Username" required>
 				<input type="password" id="password" placeholder="Password" required>
 				<input type="submit" value="Submit Form">
@@ -50,6 +53,9 @@
 
 				async function registerUser(event) {
 					event.preventDefault();
+					const firstName = document.getElementById('firstName').value;
+					const lastName = document.getElementById('lastName').value;
+					const email = document.getElementById('email').value;
 					const username = document.getElementById('username').value;
 					const password = document.getElementById('password').value;
 
@@ -59,13 +65,16 @@
 							'Content-Type': 'application/json'
 						},
 						body: JSON.stringify({
+							firstName,
+							lastName,
+							email,
 							username, 
 							password
 						})
 					}).then((res) => res.json());
 					
 					if(result.status === 'ok') {
-
+						alert('Registration success!');
 					} else {
 						alert(result.error);
 					}
