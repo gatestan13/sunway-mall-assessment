@@ -54,6 +54,7 @@
 				const form = document.getElementById('login-form');
 				form.addEventListener('submit', login);
 
+				//Sends a POST request to verify correct login, then redirects to user's profile page
 				async function login(event) {
 					event.preventDefault();
 					const username = document.getElementById('username').value;

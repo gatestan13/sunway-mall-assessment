@@ -32,6 +32,12 @@
 			font-weight: bold;
 			color: #ffffff;
 		}
+		.message input[type="submit"]:active {
+			-webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+     		-moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+          	box-shadow: inset 0px 0px 5px #c1c1c1;
+   			outline: none;
+		}
 		.message button {
 			width: 100%;
 			padding: 15px;
@@ -41,6 +47,12 @@
 			cursor: pointer;
 			font-weight: bold;
 			color: #ffffff;
+		}
+		.message button:active {
+			-webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+     		-moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+          	box-shadow: inset 0px 0px 5px #c1c1c1;
+   			outline: none;
 		}
 		</style>
 	</head>
@@ -60,8 +72,8 @@
 				form.addEventListener('submit', updateMessage);
 				logoutButton.addEventListener('click', logout);
 
+				//Sends a POST request to update user's message in the database
 				async function updateMessage(event) {
-					// event.preventDefault();
 					const newMessage = document.getElementById('newMessage').value;
 
 					const result = await fetch('/api/profile', {
@@ -81,6 +93,7 @@
 					}
 				}
 
+				//Sends a POST request to clear user's cookies and logout
 				async function logout(event) {
 					const result = await fetch ('/api/logout', {
 						method: 'POST',

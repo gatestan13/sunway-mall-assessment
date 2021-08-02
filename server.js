@@ -9,17 +9,12 @@ const cookieParser = require('cookie-parser');
 
 const JWT_SECRET = '42KLrandomstring';
 
+//Connects to MongoDB Atlas
 mongoose.connect('mongodb+srv://openthygates:TestPassword13@cluster0.mnmph.mongodb.net/SunwayMallAssessment?retryWrites=true&w=majority', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true
 })
-
-// mongoose.connect('mongodb://localhost:27017/login-app-db', {
-// 	useNewUrlParser: true,
-// 	useUnifiedTopology: true,
-// 	useCreateIndex: true
-// })
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -27,8 +22,9 @@ app.use('/', express.static(path.join(__dirname, 'main')));
 app.use(cookieParser());
 app.use(express.json());
 
+//Displays user's current message and username
 app.get('/user/profile.html', async (req, res) => {
-	//Using cookies to verify logged in user
+	//Uses JWT in cookies to verify user
 	const token = req.cookies.token;
 	try {
 		const user = jwt.verify(token, JWT_SECRET);
@@ -45,6 +41,7 @@ app.get('/user/profile.html', async (req, res) => {
 	}
 })
 
+//Updates user's message in the database, also uses JWT in cookies
 app.post('/api/profile', async (req, res) => {
 	const { message } = req.body;
 	const token = req.cookies.token;
@@ -62,6 +59,7 @@ app.post('/api/profile', async (req, res) => {
 	}
 })
 
+//Logs in the user
 app.post('/api/login', async (req, res) => {
 	const { username, password } = req.body;
 	const user = await User.findOne({ username }).lean();
@@ -69,6 +67,7 @@ app.post('/api/login', async (req, res) => {
 	if(!user) {
 		return res.json({ status: 'error', error: 'Invalid username/password'});
 	}
+	//Compares plaintextpassword to the hashed one stored in DB
 	if(await bcrypt.compare(password, user.password)) {
 		const token = jwt.sign({
 			id: user._id, 
@@ -81,6 +80,7 @@ app.post('/api/login', async (req, res) => {
 	res.json({ status: 'error' , error: 'Invalid username/password' });
 })
 
+//Logs out the user by clearing JWT in cookie
 app.post('/api/logout', async (req, res) => {
 	try {
 		res.clearCookie('token');
@@ -90,6 +90,7 @@ app.post('/api/logout', async (req, res) => {
 	}
 })
 
+//Creates a new entry in the DB with certain requirements
 app.post('/api/register', async (req, res) => {
 	const { firstName, lastName, email, username, password: plainTextPassword } = req.body;
 
@@ -117,7 +118,6 @@ app.post('/api/register', async (req, res) => {
 			username,
 			password
 		});
-		console.log('User created successfully' + response);
 	} catch(error) {
 		if (error.code === 11000) {
 			//Duplicate user ID
@@ -128,6 +128,7 @@ app.post('/api/register', async (req, res) => {
 	res.json({ status: 'ok' });
 })
 
+//Starts app on port 3000
 app.listen(process.env.PORT || 3000, () => {
 	console.log('Server up at 3000');
 })

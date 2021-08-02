@@ -57,6 +57,7 @@
 				const form = document.getElementById('register-form');
 				form.addEventListener('submit', registerUser);
 
+				//Sends a POST request to update database with user details
 				async function registerUser(event) {
 					event.preventDefault();
 					const firstName = document.getElementById('firstName').value;
