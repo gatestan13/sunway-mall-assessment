@@ -128,6 +128,6 @@ app.post('/api/register', async (req, res) => {
 	res.json({ status: 'ok' });
 })
 
-app.listen(5000, () => {
-	console.log('Server up at 5000');
+app.listen(process.env.PORT || 3000, () => {
+	console.log('Server up at 3000');
 })
