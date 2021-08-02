@@ -26,7 +26,17 @@
 			width: 100%;
 			padding: 15px;
 			background-color: #535b63;
-			border: 0;
+			border: 1px solid #dddddd;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-weight: bold;
+			color: #ffffff;
+		}
+		.message button {
+			width: 100%;
+			padding: 15px;
+			background-color: #535b63;
+			border: 1px solid #dddddd;
 			box-sizing: border-box;
 			cursor: pointer;
 			font-weight: bold;
@@ -40,15 +50,18 @@
 			<h5>Your current message is: "<%= userMessage %>"</h5>
 			<form id="message">
 				<input type="newMessage" id="newMessage" placeholder="Type here to change your message" required>
-				<input type="submit" value="Submit">
+				<input type="submit" value="Change message">
 			</form>
+			<button type='button', id='logoutButton'>Logout</button>
 
 			<script>
 				const form = document.getElementById('message');
+				const logoutButton = document.getElementById('logoutButton');
 				form.addEventListener('submit', updateMessage);
-				console.log(localStorage.getItem('token'));
+				logoutButton.addEventListener('click', logout);
 
 				async function updateMessage(event) {
+					// event.preventDefault();
 					const newMessage = document.getElementById('newMessage').value;
 
 					const result = await fetch('/api/profile', {
@@ -57,8 +70,7 @@
 							'Content-Type': 'application/json'
 						},
 						body: JSON.stringify({
-							message: newMessage,
-							token: cookies.token
+							message: newMessage
 						})
 					}).then((res) => res.json());
 					
@@ -66,6 +78,20 @@
 						alert('Successfully updated message');
 					} else {
 						alert(result.error);
+					}
+				}
+
+				async function logout(event) {
+					const result = await fetch ('/api/logout', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					}).then((res) => res.json());
+
+					if(result.status === 'ok') {
+						alert('Successfully logged out');
+						location.href = '/';
 					}
 				}
 			</script>

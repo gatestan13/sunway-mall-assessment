@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const JWT_SECRET = '42KLrandomstring';
 
+//A local mongoDB server instance is required to be running, "login-app-db" will be created if it does not exist
 mongoose.connect('mongodb://localhost:27017/login-app-db', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -40,7 +41,8 @@ app.get('/user/profile.html', async (req, res) => {
 })
 
 app.post('/api/profile', async (req, res) => {
-	const { token, message } = req.body;
+	const { message } = req.body;
+	const token = req.cookies.token;
 
 	try {
 		const user = jwt.verify(token, JWT_SECRET);
@@ -67,11 +69,20 @@ app.post('/api/login', async (req, res) => {
 			id: user._id, 
 			username: user.username
 		}, JWT_SECRET);
-		//Storing JWT token in a cookie for later verification
-		res.cookie('token', token);
+		//Storing JWT in a cookie for later verification, expires in 12 hours
+		res.cookie('token', token, { expires: new Date(Date.now() + (12 * 3600000)), httpOnly: true });
 		return res.json({ status: 'ok'});
 	}
 	res.json({ status: 'error' , error: 'Invalid username/password' });
+})
+
+app.post('/api/logout', async (req, res) => {
+	try {
+		res.clearCookie('token');
+		res.json({ status: 'ok' });
+	} catch(error) {
+		res.json({ status: 'error', error: 'Failed to logout'});
+	}
 })
 
 app.post('/api/register', async (req, res) => {
