@@ -9,7 +9,6 @@ const cookieParser = require('cookie-parser');
 
 const JWT_SECRET = '42KLrandomstring';
 
-//A local mongoDB server instance is required to be running, "login-app-db" will be created if it does not exist
 mongoose.connect('mongodb+srv://openthygates:TestPassword13@cluster0.mnmph.mongodb.net/SunwayMallAssessment?retryWrites=true&w=majority', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
