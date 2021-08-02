@@ -8,5 +8,23 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.5",
     "nodemon": "^2.0.12"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "sunway-mall-dev",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatestan13/sunway-mall-assessment.git"
+  },
+  "author": "Gates Tan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gatestan13/sunway-mall-assessment/issues"
+  },
+  "homepage": "https://github.com/gatestan13/sunway-mall-assessment#readme",
+  "description": ""
 }
